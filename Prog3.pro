@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        memorymanager.cpp
+        memorymanager.cpp \
+    corestructs.cpp
 
-HEADERS  += memorymanager.h
+HEADERS  += memorymanager.h \
+    corestructs.h
 
 FORMS    += memorymanager.ui
