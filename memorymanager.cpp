@@ -3,7 +3,7 @@
 
 MemoryManager::MemoryManager(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MemoryManager)
+    ui(new coreStructs(512, 8, this))
 {
     ui->setupUi(this);
 }
