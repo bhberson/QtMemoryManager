@@ -16,7 +16,7 @@ public:
     ~MemoryManager();
 
 public slots:
-    void loadInputFile();
+    void loadInput();
     void next();
     void createPages(int numPages);
 
