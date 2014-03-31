@@ -2,12 +2,15 @@
 #define MEMORYMANAGER_H
 
 #include <QMainWindow>
+#include "ui_memorymanager.h"
+#include "corestructs.h"
+
 
 namespace Ui {
 class MemoryManager;
 }
 
-class MemoryManager : public QMainWindow
+class MemoryManager : public QMainWindow, private Ui::MemoryManager
 {
     Q_OBJECT
 
@@ -16,17 +19,16 @@ public:
     ~MemoryManager();
 
 public slots:
-    void loadInputFile();
+    void loadInput();
     void next();
     void createPages(int numPages);
 
 
 private:
-    Ui::MemoryManager *ui;
-
+    CoreStructs *cs;
 private slots:
     void start();
-    void insertPage(int pageIndex, Page page);
+    void insertPage(int pageIndex);
     void removePage(int pageIndex);
     void showError(const QString &title, const QString &message);
     void showMessage(const QString &message);

@@ -3,17 +3,17 @@
 
 #include <QObject>
 
-class coreStructs : public QObject
+class CoreStructs : public QObject
 {
     Q_OBJECT
 public:
-    explicit coreStructs(int pageSize, int numPages, QObject *parent = 0);
-    ~coreStructs();
+    explicit CoreStructs(int pageSize, int numPages, QObject *parent = 0);
+    ~CoreStructs();
 
 signals:
     void pagesCreated(int numPages);
     void lineBeingParsed(int lineNumber);
-    void pageInserted(int pageIndex, Page page);
+    void pageInserted(int pageIndex);
     void pageRemoved(int pageIndex);
     void showError(const QString &title, const QString &message);
     void showMessage(const QString &message);
