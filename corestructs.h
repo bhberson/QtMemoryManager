@@ -9,6 +9,7 @@ class CoreStructs : public QObject
 public:
     explicit CoreStructs(int pageSize, int numPages, QObject *parent = 0);
     ~CoreStructs();
+    void initPages();
 
 signals:
     void pagesCreated(int numPages);
