@@ -28,7 +28,7 @@ private:
     CoreStructs *cs;
 private slots:
     void start();
-    void insertPage(int pageIndex);
+    void insertPage(int pageIndex, Page page);
     void removePage(int pageIndex);
     void showError(const QString &title, const QString &message);
     void showMessage(const QString &message);
