@@ -3,6 +3,25 @@
 
 #include <QObject>
 
+struct Page
+{
+    int type;
+    int segmentPageNumber;
+    int pid;
+};
+
+struct Segment
+{
+    enum Type
+    {
+        Code,
+        Data
+    };
+
+    int type;
+    int size;
+};
+
 class CoreStructs : public QObject
 {
     Q_OBJECT
@@ -26,6 +45,7 @@ public slots:
 private:
     int pageSize;
     int numPages;
+    Page *pageTable;
 
 };
 
