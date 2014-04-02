@@ -16,8 +16,8 @@ MemoryManager::MemoryManager(QWidget *parent) :
     connect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
     connect(startButton, SIGNAL(clicked()), this, SLOT(loadInput()));
     connect(cs, SIGNAL(pagesCreated(int)), this, SLOT(createPages(int)));
-    connect(cs, SIGNAL(error(QString,QString)), this, SLOT(showError(QString,QString)));
-    connect(cs, SIGNAL(message(QString)), this, SLOT(showMessage(QString)));
+    connect(cs, SIGNAL(showError(QString,QString)), this, SLOT(showError(QString,QString)));
+    connect(cs, SIGNAL(showMessage(QString)), this, SLOT(showMessage(QString)));
     connect(cs, SIGNAL(pageInserted(int,Page)), this, SLOT(insertPage(int,Page)));
     connect(cs, SIGNAL(pageRemoved(int)), this, SLOT(removePage(int)));
     cs->initPages();

@@ -1,5 +1,6 @@
 #include "corestructs.h"
 #include <cmath>
+#include <QTextStream>
 #include <QDebug>
 
 CoreStructs::CoreStructs(int pageSize, int numPages, QObject *parent) :
@@ -13,7 +14,7 @@ CoreStructs::CoreStructs(int pageSize, int numPages, QObject *parent) :
 
 CoreStructs::~CoreStructs(){
     if(pageTable)
-            delete pageTable;
+        delete pageTable;
 }
 
 void CoreStructs::initPages()
@@ -33,7 +34,31 @@ void CoreStructs::initPages()
 
 void CoreStructs::next(QString command)
 {
-    // Needs to be implemented
+    emit showMessage("==> " + command);
+    QTextStream inputParser(&command, QIODevice::ReadOnly | QIODevice::Text);
+    int pid;
+    int secondCommand;
+    inputParser >> pid >> secondCommand;
+    if(inputParser.status() == QTextStream::ReadCorruptData)
+    {
+        emit showError("Parsing error.", "Error in parsing current line.");
+        return;
+    }
+    if(secondCommand == -1)
+        removeProcess(pid);
+    else
+    {
+        Segment seg = {0, secondCommand};
+        Process proc;
+        proc.pid = pid;
+        while(inputParser.status() == QTextStream::Ok)
+        {
+            proc.segments << seg;
+            ++seg.type;
+            inputParser >> seg.size;
+        }
+        insertProcess(proc);
+    }
 }
 
 void CoreStructs::insertProcess(const Process &process)
