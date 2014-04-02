@@ -18,7 +18,7 @@ MemoryManager::MemoryManager(QWidget *parent) :
     connect(cs, SIGNAL(pagesCreated(int)), this, SLOT(createPages(int)));
     connect(cs, SIGNAL(error(QString,QString)), this, SLOT(showError(QString,QString)));
     connect(cs, SIGNAL(message(QString)), this, SLOT(showMessage(QString)));
-    connect(cs, SIGNAL(pageInserted(int)), this, SLOT(insertPage(int)));
+    connect(cs, SIGNAL(pageInserted(int,Page)), this, SLOT(insertPage(int,Page)));
     connect(cs, SIGNAL(pageRemoved(int)), this, SLOT(removePage(int)));
     cs->initPages();
 }
@@ -31,7 +31,7 @@ MemoryManager::~MemoryManager()
 
 void MemoryManager::loadInput()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Please select an acceptable file to input", QString(), "*.txt *.dat", 0, QFileDialog::ReadOnly);
+    QString fileName = QFileDialog::getOpenFileName(this, "Please select an acceptable file to input", QString(), "*.txt *.dat *.data", 0, QFileDialog::ReadOnly);
     if(fileName.isEmpty())
         return;
     QFile inputFile(fileName);
@@ -66,7 +66,7 @@ void MemoryManager::next()
 void MemoryManager::createPages(int numPages)
 {
     QLayoutItem *child;
-    while ((child = pageTableWidget->takeAt(0)) != 0)
+    while ((child = pageTableLayout->takeAt(0)) != 0)
        delete child;
 
     QLabel *label;
@@ -76,7 +76,7 @@ void MemoryManager::createPages(int numPages)
         label->setFrameShape(QLabel::Box);
         label->setFrameShadow(QLabel::Raised);
         label->setAlignment(Qt::AlignCenter);
-        pageTableWidget->addWidget(label);
+        pageTableLayout->addWidget(label);
     }
 }
 
@@ -107,14 +107,14 @@ void MemoryManager::start()
     cs->next(extraSelections[0].cursor.selectedText());
 }
 
-void MemoryManager::insertPage(int pageIndex)
+void MemoryManager::insertPage(int pageIndex, Page page)
 {
-    // Needs to Be Implemented
+    ((QLabel*)pageTableLayout->itemAt(pageIndex)->widget())->setText(QString(page.type == Segment::Code ? "Code" : "Data") + "-" + QString::number(page.segmentPageNumber) + " of P" + QString::number(page.pid));
 }
 
 void MemoryManager::removePage(int pageIndex)
 {
-    // Needs to Be Implemented
+    ((QLabel*)pageTableLayout->itemAt(pageIndex)->widget())->setText("Free");
 }
 
 void MemoryManager::showError(const QString &title, const QString &message)
