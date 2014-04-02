@@ -23,12 +23,23 @@ void CoreStructs::initPages()
     {
         pageTable[pageIndex].type = 0;
         pageTable[pageIndex].segmentPageNumber = 0;
+        pageTable[pageIndex].pid = -1;
     }
     emit pagesCreated(numPages);
 }
 
 
 void CoreStructs::next(QString command)
+{
+    // Needs to be implemented
+}
+
+void CoreStructs::insertProcess(const Process &process)
+{
+    // Needs to be implemented
+}
+
+void CoreStructs::removeProcess(int pid)
 {
     // Needs to be implemented
 }

@@ -22,6 +22,12 @@ struct Segment
     int size;
 };
 
+struct Process
+{
+    int pid;
+    QList<Segment> segments;
+};
+
 class CoreStructs : public QObject
 {
     Q_OBJECT
@@ -33,7 +39,7 @@ public:
 signals:
     void pagesCreated(int numPages);
     void lineBeingParsed(int lineNumber);
-    void pageInserted(int pageIndex);
+    void pageInserted(int pageIndex, Page page);
     void pageRemoved(int pageIndex);
     void showError(const QString &title, const QString &message);
     void showMessage(const QString &message);
@@ -46,6 +52,8 @@ private:
     int pageSize;
     int numPages;
     Page *pageTable;
+    void insertProcess(const Process &process);
+    void removeProcess(int pid);
 
 };
 
