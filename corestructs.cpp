@@ -21,28 +21,31 @@ void CoreStructs::initPages()
 {
     if(pageTable)
         delete pageTable;
+    //clears existing table and sets up new one
     pageTable = new Page[numPages];
+    //instantitate everything to 0/empty
     for(int pageIndex = 0; pageIndex < numPages; ++pageIndex)
     {
         pageTable[pageIndex].type = 0;
         pageTable[pageIndex].segPageNum = 0;
         pageTable[pageIndex].pid = -1;
     }
+    //GUI Call
     emit pagesCreated(numPages);
 }
 
 void CoreStructs::next(QString command)
 {
+    //GUI Call - shows read in command and begins to split
     emit showMessage("~~~$ " + command);
     QStringList commandList = command.split(" ");
     int pid = commandList[0].toInt();
-
     if(commandList[1] == "Halt")
         removeProcess(pid);
     else
     {
-        int secondCommand = commandList[1].toInt();
-        Segment seg = {0, secondCommand};
+        //breaks up the second and third commands
+        Segment seg = {0, commandList[1].toInt()};
         Process proc;
         proc.pid = pid;
         proc.segments << seg;
@@ -57,6 +60,7 @@ int CoreStructs::calcSize(double size)
 {
     return ceil(size/pageSize);
 }
+
 QString CoreStructs::processMessage(const Process &process)
 {
     int textPages = calcSize((double)process.segments[0].size);
@@ -102,16 +106,21 @@ void CoreStructs::insertProcess(const Process &process)
         segSize = seg.size;
         int segPageNum = 0;
         int pageIndex = 0;
+        //keeps going until the entire size is split among pages
         while(segSize > 0)
         {
+            //will loop through all 8 pages in page table
             for( ; pageIndex < numPages; ++pageIndex)
             {
+                //only grabs available "free" slots
                 if(pageTable[pageIndex].pid == -1)
                 {
                     pageTable[pageIndex].type = seg.type;
                     pageTable[pageIndex].segPageNum = segPageNum;
                     pageTable[pageIndex].pid = process.pid;
+                    //removes just the size of the page
                     segSize -= pageSize;
+                    //GUI Calls
                     emit pageInserted(pageIndex, pageTable[pageIndex]);
                     emit showMessage(pageMessage(pageNum, seg.type, process.pid, pageIndex));
                     ++segPageNum;
@@ -125,9 +134,11 @@ void CoreStructs::insertProcess(const Process &process)
 
 void CoreStructs::removeProcess(int pid)
 {
+    //GUI Call
     emit showMessage("End of Process " + QString::number(pid));
     for(int pageIndex = 0; pageIndex < numPages; ++pageIndex)
     {
+        //finds matching process and clears them out and calls GUI changes
         if(pageTable[pageIndex].pid == pid)
         {
             pageTable[pageIndex].pid = -1;

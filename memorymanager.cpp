@@ -12,6 +12,7 @@ MemoryManager::MemoryManager(QWidget *parent) :
     cs(new CoreStructs(512, 8, this))
 {
     setupUi(this);
+    //all UI connections
     connect(actionOpen, SIGNAL(triggered()), this, SLOT(loadInput()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
     connect(startButton, SIGNAL(clicked()), this, SLOT(loadInput()));
@@ -47,7 +48,7 @@ void MemoryManager::loadInput()
     QFile inputFile(fileName);
     if(!inputFile.open(QFile::ReadOnly | QFile::Text))
         return;
-
+    //displays the read in file to the GUI
     QTextStream inputTextStream(&inputFile);
     inputTextEdit->setPlainText(inputTextStream.readAll());
 }
@@ -56,7 +57,7 @@ void MemoryManager::next()
 {
     QList<QTextEdit::ExtraSelection> extraSelections = inputTextEdit->extraSelections();
     extraSelections[0].cursor.movePosition(QTextCursor::Down);
-
+    //Moves line by line to be read
     extraSelections[0].cursor.select(QTextCursor::LineUnderCursor);
     QString selText = extraSelections[0].cursor.selectedText();
     if(selText.isEmpty())
@@ -69,7 +70,7 @@ void MemoryManager::next()
 
     extraSelections[0].cursor.clearSelection();
     inputTextEdit->setExtraSelections(extraSelections);
-
+    //core data struct call
     cs->next(selText);
 }
 
@@ -80,6 +81,7 @@ void MemoryManager::createPages(int numPages)
        delete child;
 
     QLabel *label;
+    //makes all available gui page tables "Free"
     for(int i = 0; i < numPages; ++i)
     {
         label = new QLabel("Free");
@@ -100,6 +102,7 @@ void MemoryManager::removePage(int pageIndex)
     ((QLabel*)pageTableLayout->itemAt(pageIndex)->widget())->setText("Free");
 }
 
+//created just for the first line to start the process before swtiching to "next"
 void MemoryManager::start()
 {
     QTextEdit::ExtraSelection selectedLine;
