@@ -3,18 +3,11 @@
 
 #include <QObject>
 
-struct Page
-{
-    int type;
-    int segmentPageNumber;
-    int pid;
-};
-
 struct Segment
 {
     enum Type
     {
-        Code,
+        Text,
         Data
     };
 
@@ -26,6 +19,13 @@ struct Process
 {
     int pid;
     QList<Segment> segments;
+};
+
+struct Page
+{
+    int type;
+    int segPageNum;
+    int pid;
 };
 
 class CoreStructs : public QObject
@@ -43,7 +43,6 @@ signals:
     void pageRemoved(int pageIndex);
     void showError(const QString &title, const QString &message);
     void showMessage(const QString &message);
-
 
 public slots:
     void next(QString command);

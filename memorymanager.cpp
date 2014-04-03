@@ -16,10 +16,11 @@ MemoryManager::MemoryManager(QWidget *parent) :
     connect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
     connect(startButton, SIGNAL(clicked()), this, SLOT(loadInput()));
     connect(cs, SIGNAL(pagesCreated(int)), this, SLOT(createPages(int)));
-    connect(cs, SIGNAL(showError(QString,QString)), this, SLOT(showError(QString,QString)));
-    connect(cs, SIGNAL(showMessage(QString)), this, SLOT(showMessage(QString)));
     connect(cs, SIGNAL(pageInserted(int,Page)), this, SLOT(insertPage(int,Page)));
     connect(cs, SIGNAL(pageRemoved(int)), this, SLOT(removePage(int)));
+    connect(cs, SIGNAL(showError(QString,QString)), this, SLOT(showError(QString,QString)));
+    connect(cs, SIGNAL(showMessage(QString)), this, SLOT(showMessage(QString)));
+
     cs->initPages();
 }
 
@@ -28,6 +29,15 @@ MemoryManager::~MemoryManager()
     delete cs;
 }
 
+void MemoryManager::showError(const QString &title, const QString &message)
+{
+    QMessageBox(QMessageBox::Critical, title, message, QMessageBox::Ok, this).exec();
+}
+
+void MemoryManager::showMessage(const QString &message)
+{
+    outputTextEdit->appendPlainText(message);
+}
 
 void MemoryManager::loadInput()
 {
@@ -41,6 +51,7 @@ void MemoryManager::loadInput()
     QTextStream inputTextStream(&inputFile);
     inputTextEdit->setPlainText(inputTextStream.readAll());
 }
+
 void MemoryManager::next()
 {
     QList<QTextEdit::ExtraSelection> extraSelections = inputTextEdit->extraSelections();
@@ -50,16 +61,15 @@ void MemoryManager::next()
     QString selText = extraSelections[0].cursor.selectedText();
     if(selText.isEmpty())
     {
-        showMessage("End of simulation");
+        showMessage("The End");
         disconnect(nextButton, SIGNAL(clicked()), this, SLOT(next()));
+        connect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
         return;
     }
 
-    // Render highlighted line
     extraSelections[0].cursor.clearSelection();
     inputTextEdit->setExtraSelections(extraSelections);
 
-    // Tell the memory manager to step
     cs->next(selText);
 }
 
@@ -80,36 +90,9 @@ void MemoryManager::createPages(int numPages)
     }
 }
 
-void MemoryManager::start()
-{
-    QTextEdit::ExtraSelection selection;
-    selection.format.setBackground(QColor(0xc0,0xff,0xc0,0x80));
-    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-    selection.cursor = QTextCursor(inputTextEdit->document());
-    selection.cursor.setPosition(0);
-
-    QList<QTextEdit::ExtraSelection> extraSelections;
-    extraSelections << selection;
-
-    inputTextEdit->setExtraSelections(extraSelections);
-
-        // Change connections
-    disconnect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
-    connect(nextButton, SIGNAL(clicked()), this, SLOT(next()));
-
-        // Change button text
-    nextButton->setText("&Next");
-
-        // Select the current line
-    extraSelections[0].cursor.select(QTextCursor::LineUnderCursor);
-
-        // Tell the memory manager to execute the first step
-    cs->next(extraSelections[0].cursor.selectedText());
-}
-
 void MemoryManager::insertPage(int pageIndex, Page page)
 {
-    ((QLabel*)pageTableLayout->itemAt(pageIndex)->widget())->setText(QString(page.type == Segment::Code ? "Code" : "Data") + "-" + QString::number(page.segmentPageNumber) + " of P" + QString::number(page.pid));
+    ((QLabel*)pageTableLayout->itemAt(pageIndex)->widget())->setText(QString(page.type == Segment::Text ? "Text" : "Data") + "-" + QString::number(page.segPageNum) + " of P" + QString::number(page.pid));
 }
 
 void MemoryManager::removePage(int pageIndex)
@@ -117,12 +100,23 @@ void MemoryManager::removePage(int pageIndex)
     ((QLabel*)pageTableLayout->itemAt(pageIndex)->widget())->setText("Free");
 }
 
-void MemoryManager::showError(const QString &title, const QString &message)
+void MemoryManager::start()
 {
-    QMessageBox(QMessageBox::Critical, title, message, QMessageBox::Ok, this).exec();
-}
+    QTextEdit::ExtraSelection selectedLine;
+    selectedLine.format.setBackground(QColor(0xcc, 0x88, 0x33, 0xff ));
+    selectedLine.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selectedLine.cursor = QTextCursor(inputTextEdit->document());
+    selectedLine.cursor.setPosition(0);
 
-void MemoryManager::showMessage(const QString &message)
-{
-    outputTextEdit->appendPlainText(message);
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    extraSelections << selectedLine;
+
+    inputTextEdit->setExtraSelections(extraSelections);
+
+    disconnect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
+    connect(nextButton, SIGNAL(clicked()), this, SLOT(next()));
+
+    extraSelections[0].cursor.select(QTextCursor::LineUnderCursor);
+
+    cs->next(extraSelections[0].cursor.selectedText());
 }
