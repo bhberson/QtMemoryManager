@@ -45,28 +45,62 @@ void CoreStructs::next(QString command)
         Segment seg = {0, secondCommand};
         Process proc;
         proc.pid = pid;
-        if (commandList.size() > 2)
-        {
-            proc.segments << seg;
-            ++seg.type;
-            seg.size = commandList[2].toInt();
-            proc.segments << seg;
-        }
+        proc.segments << seg;
+        ++seg.type;
+        seg.size = commandList[2].toInt();
+        proc.segments << seg;
         insertProcess(proc);
     }
 }
 
+int CoreStructs::calcSize(double size)
+{
+    return ceil(size/pageSize);
+}
+QString CoreStructs::processMessage(const Process &process)
+{
+    int textPages = calcSize((double)process.segments[0].size);
+    int dataPages = calcSize((double)process.segments[1].size);
+    QString message;
+    message.append("Loading process ");
+    message.append(QString::number(process.pid));
+    message.append(" into M: textSeg=");
+    message.append(QString::number(process.segments[0].size));
+    message.append(" (");
+    message.append(QString::number(textPages));
+    message.append(" pages), dataSeg=");
+    message.append(QString::number(process.segments[1].size));
+    message.append(" (");
+    message.append(QString::number(dataPages));
+    message.append(" pages)");
+    return message;
+}
+
+QString CoreStructs::pageMessage(int pageNum, int type, int pid, int pageIndex)
+{
+    QString message;
+    message.append("Load page ");
+    message.append(QString::number(pageNum));
+    message.append(" (");
+    message.append(QString(type == Segment::Text ? "Text" : "Data"));
+    message.append(") of process ");
+    message.append(QString::number(pid));
+    message.append(" to frame ");
+    message.append(QString::number(pageIndex));
+    return message;
+}
+
 void CoreStructs::insertProcess(const Process &process)
 {
-    int textPages = ceil((double)process.segments[0].size / pageSize);
-    int dataPages = ceil((double)process.segments[1].size / pageSize);
-    emit showMessage("Loading program " + QString::number(process.pid) + " into RAM: text=" + QString::number(process.segments[0].size) + " (" + QString::number(textPages) + " page" + QString(textPages > 1 ? "s" : "") +  "), data=" + QString::number(process.segments[1].size) + " (" + QString::number(dataPages) + " page" + QString(dataPages > 1 ? "s" : "") +  ")");
     int segSize;
     int pageNum = 0;
+
+    emit showMessage(processMessage(process));
+
     foreach(const Segment &seg, process.segments)
     {
         segSize = seg.size;
-        int segmentPageNumber = 0;
+        int segPageNum = 0;
         int pageIndex = 0;
         while(segSize > 0)
         {
@@ -75,12 +109,12 @@ void CoreStructs::insertProcess(const Process &process)
                 if(pageTable[pageIndex].pid == -1)
                 {
                     pageTable[pageIndex].type = seg.type;
-                    pageTable[pageIndex].segPageNum = segmentPageNumber;
+                    pageTable[pageIndex].segPageNum = segPageNum;
                     pageTable[pageIndex].pid = process.pid;
                     segSize -= pageSize;
                     emit pageInserted(pageIndex, pageTable[pageIndex]);
-                    emit showMessage("Load page " + QString::number(pageNum) + " (" + QString(seg.type == Segment::Text ? "T" : "D") + ") of process " + QString::number(process.pid) + " to frame " + QString::number(pageIndex));
-                    ++segmentPageNumber;
+                    emit showMessage(pageMessage(pageNum, seg.type, process.pid, pageIndex));
+                    ++segPageNum;
                     ++pageNum;
                     break;
                 }

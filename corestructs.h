@@ -7,8 +7,7 @@ struct Segment
 {
     enum Type
     {
-        Text,
-        Data
+        Text, Data
     };
 
     int type;
@@ -51,6 +50,9 @@ private:
     int pageSize;
     int numPages;
     Page *pageTable;
+    int calcSize(double size);
+    QString processMessage(const Process &process);
+    QString pageMessage(int pageNum, int type, int pid, int pageIndex);
     void insertProcess(const Process &process);
     void removeProcess(int pid);
 
