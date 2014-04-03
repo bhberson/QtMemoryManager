@@ -72,13 +72,13 @@ QString CoreStructs::processMessage(const Process &process)
     int textPages = calcSize((double)process.segments[0].size);
     int dataPages = calcSize((double)process.segments[1].size);
     QString message;
-    message.append("Loading process ");
+    message.append("Process ");
     message.append(QString::number(process.pid));
-    message.append(" into M: textSeg=");
+    message.append(" loaded into M:\n\t textSeg=");
     message.append(QString::number(process.segments[0].size));
     message.append(" (");
     message.append(QString::number(textPages));
-    message.append(" pages), dataSeg=");
+    message.append(" pages)\n\t dataSeg=");
     message.append(QString::number(process.segments[1].size));
     message.append(" (");
     message.append(QString::number(dataPages));
@@ -89,13 +89,13 @@ QString CoreStructs::processMessage(const Process &process)
 QString CoreStructs::pageMessage(int pageNum, int type, int pid, int pageIndex)
 {
     QString message;
-    message.append("Load page ");
+    message.append("Page ");
     message.append(QString::number(pageNum));
     message.append(" (");
     message.append(QString(type == Segment::Text ? "Text" : "Data"));
-    message.append(") of process ");
+    message.append(") loaded into M\n\t From Process ");
     message.append(QString::number(pid));
-    message.append(" to frame ");
+    message.append(" to Frame ");
     message.append(QString::number(pageIndex));
     return message;
 }
