@@ -6,33 +6,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>631</width>
-    <height>361</height>
+    <width>451</width>
+    <height>829</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MemoryManager</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
-     <widget class="QFrame" name="leftFrame">
+     <widget class="QFrame" name="rightFrame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QPlainTextEdit" name="inputTextEdit"/>
-       </item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QPushButton" name="startButton">
          <property name="text">
-          <string>Start</string>
+          <string>Open File</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="inputTextEdit"/>
        </item>
       </layout>
      </widget>
@@ -45,35 +45,35 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="pageTableLayout"/>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="verticalSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>120</width>
-           <height>1</height>
+           <width>20</width>
+           <height>400</height>
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="pageTableLayout"/>
        </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QFrame" name="rightFrame">
+     <widget class="QFrame" name="leftFrame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QPlainTextEdit" name="outputTextEdit"/>
        </item>
@@ -94,7 +94,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>631</width>
+     <width>451</width>
      <height>22</height>
     </rect>
    </property>
