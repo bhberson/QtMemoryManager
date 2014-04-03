@@ -14,13 +14,17 @@ CoreStructs::CoreStructs(int pageSize, int numPages, QObject *parent) :
 
 CoreStructs::~CoreStructs(){
     if(pageTable)
+    {
         delete pageTable;
+    }
 }
 
 void CoreStructs::initPages()
 {
     if(pageTable)
+    {
         delete pageTable;
+    }
     //clears existing table and sets up new one
     pageTable = new Page[numPages];
     //instantitate everything to 0/empty
@@ -41,7 +45,9 @@ void CoreStructs::next(QString command)
     QStringList commandList = command.split(" ");
     int pid = commandList[0].toInt();
     if(commandList[1] == "Halt")
+    {
         removeProcess(pid);
+    }
     else
     {
         //breaks up the second and third commands
@@ -123,8 +129,8 @@ void CoreStructs::insertProcess(const Process &process)
                     //GUI Calls
                     emit pageInserted(pageIndex, pageTable[pageIndex]);
                     emit showMessage(pageMessage(pageNum, seg.type, process.pid, pageIndex));
-                    ++segPageNum;
                     ++pageNum;
+                    ++segPageNum;
                     break;
                 }
             }

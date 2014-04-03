@@ -21,7 +21,6 @@ MemoryManager::MemoryManager(QWidget *parent) :
     connect(cs, SIGNAL(pageRemoved(int)), this, SLOT(removePage(int)));
     connect(cs, SIGNAL(showError(QString,QString)), this, SLOT(showError(QString,QString)));
     connect(cs, SIGNAL(showMessage(QString)), this, SLOT(showMessage(QString)));
-
     cs->initPages();
 }
 
@@ -44,10 +43,14 @@ void MemoryManager::loadInput()
 {
     QString fileName = QFileDialog::getOpenFileName(this, "Please select an acceptable file to input", QString(), "*.txt *.dat *.data", 0, QFileDialog::ReadOnly);
     if(fileName.isEmpty())
+    {
         return;
+    }
     QFile inputFile(fileName);
     if(!inputFile.open(QFile::ReadOnly | QFile::Text))
+    {
         return;
+    }
     //displays the read in file to the GUI
     QTextStream inputTextStream(&inputFile);
     inputTextEdit->setPlainText(inputTextStream.readAll());
@@ -60,6 +63,7 @@ void MemoryManager::next()
     //Moves line by line to be read
     extraSelections[0].cursor.select(QTextCursor::LineUnderCursor);
     QString selText = extraSelections[0].cursor.selectedText();
+    //end of lines
     if(selText.isEmpty())
     {
         showMessage("The End");
@@ -78,7 +82,9 @@ void MemoryManager::createPages(int numPages)
 {
     QLayoutItem *child;
     while ((child = pageTableLayout->takeAt(0)) != 0)
+    {
        delete child;
+    }
 
     QLabel *label;
     //makes all available gui page tables "Free"
@@ -113,13 +119,11 @@ void MemoryManager::start()
 
     QList<QTextEdit::ExtraSelection> extraSelections;
     extraSelections << selectedLine;
-
     inputTextEdit->setExtraSelections(extraSelections);
-
+    extraSelections[0].cursor.select(QTextCursor::LineUnderCursor);
+    //flips buttons
     disconnect(nextButton, SIGNAL(clicked()), this, SLOT(start()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(next()));
-
-    extraSelections[0].cursor.select(QTextCursor::LineUnderCursor);
 
     cs->next(extraSelections[0].cursor.selectedText());
 }
